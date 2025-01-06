@@ -19,9 +19,6 @@ import {
 export default function Home() {
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
-      <Header />
-
       {/* Hero Section */}
       <section className="py-12 sm:py-16 md:py-20 px-4">
         <Container>
