@@ -1,9 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { BarChart3Icon, SunIcon } from "lucide-react";
-import { Button } from "./ui/button";
+import { BarChart3Icon } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { useSession, signOut } from "next-auth/react";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 export function Header() {
   const { data: session, status } = useSession();
@@ -32,9 +33,7 @@ export function Header() {
           </Link>
         </div>
         <div className="flex items-center gap-4">
-          <Button variant="ghost" size="icon">
-            <SunIcon className="h-5 w-5" />
-          </Button>
+          <ThemeToggle />
           <div className="flex items-center gap-2">
             {session ? (
               <Button variant="destructive" onClick={() => signOut()}>
