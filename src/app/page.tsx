@@ -13,7 +13,6 @@ import {
   LineChart,
   PieChartIcon,
   ArrowRightIcon,
-  SunIcon,
 } from "lucide-react";
 
 export default function Home() {
