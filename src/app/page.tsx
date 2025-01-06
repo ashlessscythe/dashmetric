@@ -1,13 +1,14 @@
-import { Button } from "../components/ui/button";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "../components/ui/card";
+} from "@/components/ui/card";
 import Link from "next/link";
 import { Header } from "@/components/header";
+import { Container } from "@/components/ui/container";
 import {
   BarChart3Icon,
   LineChart,
@@ -22,35 +23,37 @@ export default function Home() {
       <Header />
 
       {/* Hero Section */}
-      <section className="py-20 px-4">
-        <div className="container mx-auto max-w-[64rem] text-center">
-          <h1 className="text-4xl font-bold tracking-tight sm:text-6xl">
-            Transform Your Data into{" "}
-            <span className="text-primary">Actionable Insights</span>
-          </h1>
-          <p className="mt-6 text-xl text-muted-foreground max-w-2xl mx-auto">
-            Powerful analytics and visualization tools to help you make better
-            decisions. Track metrics, generate reports, and share insights with
-            your team.
-          </p>
-          <div className="mt-10 flex items-center justify-center gap-x-6">
-            <Button size="lg" asChild>
-              <Link href="/login" className="gap-2">
-                Start Your Journey
-                <ArrowRightIcon className="h-4 w-4" />
-              </Link>
-            </Button>
+      <section className="py-12 sm:py-16 md:py-20 px-4">
+        <Container>
+          <div className="max-w-[64rem] mx-auto text-center">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight">
+              Transform Your Data into{" "}
+              <span className="text-primary">Actionable Insights</span>
+            </h1>
+            <p className="mt-4 sm:mt-6 text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto">
+              Powerful analytics and visualization tools to help you make better
+              decisions. Track metrics, generate reports, and share insights
+              with your team.
+            </p>
+            <div className="mt-8 sm:mt-10 flex items-center justify-center gap-x-4 sm:gap-x-6">
+              <Button size="lg" asChild className="px-6 py-3 text-base">
+                <Link href="/login" className="gap-2">
+                  Start Your Journey
+                  <ArrowRightIcon className="h-4 w-4" />
+                </Link>
+              </Button>
+            </div>
           </div>
-        </div>
+        </Container>
       </section>
 
       {/* Features */}
-      <section className="py-20 bg-muted/50">
-        <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center mb-12">
+      <section className="py-12 sm:py-16 md:py-20 bg-muted/50">
+        <Container>
+          <h2 className="text-2xl sm:text-3xl font-bold text-center mb-8 sm:mb-12">
             Everything You Need
           </h2>
-          <div className="grid md:grid-cols-3 gap-8">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
             <Card>
               <CardHeader>
                 <div className="p-2 w-fit rounded-lg bg-primary/10 mb-4">
@@ -89,7 +92,7 @@ export default function Home() {
                 </ul>
               </CardContent>
             </Card>
-            <Card>
+            <Card className="sm:col-span-2 lg:col-span-1">
               <CardHeader>
                 <div className="p-2 w-fit rounded-lg bg-primary/10 mb-4">
                   <PieChartIcon className="h-6 w-6 text-primary" />
@@ -109,13 +112,13 @@ export default function Home() {
               </CardContent>
             </Card>
           </div>
-        </div>
+        </Container>
       </section>
 
       {/* Footer */}
-      <footer className="border-t py-12 mt-20">
-        <div className="container mx-auto px-4">
-          <div className="grid md:grid-cols-2 gap-8">
+      <footer className="border-t py-8 sm:py-12 mt-12 sm:mt-20">
+        <Container>
+          <div className="grid sm:grid-cols-2 gap-8">
             <div>
               <div className="flex items-center space-x-2">
                 <BarChart3Icon className="h-6 w-6" />
@@ -135,7 +138,7 @@ export default function Home() {
               </p>
             </div>
           </div>
-        </div>
+        </Container>
       </footer>
     </div>
   );

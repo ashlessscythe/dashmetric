@@ -1,15 +1,16 @@
 "use client";
 
-import { Button } from "../../components/ui/button";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "../../components/ui/card";
+} from "@/components/ui/card";
 import Link from "next/link";
-import { Header } from "../../components/header";
+import { Header } from "@/components/header";
+import { Container } from "@/components/ui/container";
 import { signIn } from "next-auth/react";
 import { Suspense, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -52,7 +53,7 @@ function LoginForm() {
   }
 
   return (
-    <div className="relative w-full max-w-lg">
+    <div className="relative w-full max-w-sm sm:max-w-md md:max-w-lg">
       <div className="absolute inset-0 bg-primary/10 transform -skew-y-3 rounded-3xl" />
       <Card className="relative">
         <CardHeader className="space-y-1">
@@ -115,7 +116,7 @@ function LoginForm() {
             <div className="mt-2">
               <Link
                 href="/"
-                className="text-muted-foreground hover:text-primary"
+                className="text-muted-foreground hover:text-primary hover:underline"
               >
                 Back to Home
               </Link>
@@ -131,11 +132,13 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen flex flex-col bg-background">
       <Header />
-      <main className="flex-1 flex items-center justify-center p-4">
-        <Suspense fallback={<div>Loading...</div>}>
-          <LoginForm />
-        </Suspense>
-      </main>
+      <Container>
+        <main className="flex-1 flex items-center justify-center py-8 px-4 sm:px-6 lg:px-8">
+          <Suspense fallback={<div>Loading...</div>}>
+            <LoginForm />
+          </Suspense>
+        </main>
+      </Container>
     </div>
   );
 }
