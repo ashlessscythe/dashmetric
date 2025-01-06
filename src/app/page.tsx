@@ -7,6 +7,7 @@ import {
   CardTitle,
 } from "../components/ui/card";
 import Link from "next/link";
+import { Header } from "@/components/header";
 import {
   BarChart3Icon,
   LineChart,
@@ -19,22 +20,7 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="border-b">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center space-x-2">
-            <BarChart3Icon className="h-6 w-6" />
-            <h1 className="text-2xl font-bold">DashMetric</h1>
-          </div>
-          <div className="flex items-center gap-4">
-            <Button variant="ghost" size="icon">
-              <SunIcon className="h-5 w-5" />
-            </Button>
-            <Button asChild>
-              <Link href="/login">Get Started</Link>
-            </Button>
-          </div>
-        </div>
-      </header>
+      <Header />
 
       {/* Hero Section */}
       <section className="py-20 px-4">
