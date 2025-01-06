@@ -2,12 +2,13 @@
 
 import Link from "next/link";
 import { BarChart3Icon } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Button } from "./ui/button";
 import { useSession, signOut } from "next-auth/react";
-import { ThemeToggle } from "@/components/theme-toggle";
+import { ThemeToggle } from "./theme-toggle";
 
 export function Header() {
   const { data: session, status } = useSession();
+  const appName = process.env.NEXT_PUBLIC_APP_NAME || "DashMetric";
 
   if (status === "loading") {
     return (
@@ -16,7 +17,7 @@ export function Header() {
           <div className="flex items-center space-x-2">
             <BarChart3Icon className="h-6 w-6" />
             <Link href="/" className="text-2xl font-bold">
-              DashMetric
+              <span className="gradient-text">{appName}</span>
             </Link>
           </div>
         </div>
@@ -29,7 +30,7 @@ export function Header() {
         <div className="flex items-center space-x-2">
           <BarChart3Icon className="h-6 w-6" />
           <Link href="/" className="text-2xl font-bold">
-            DashMetric
+            <span className="gradient-text">{appName}</span>
           </Link>
         </div>
         <div className="flex items-center gap-4">
