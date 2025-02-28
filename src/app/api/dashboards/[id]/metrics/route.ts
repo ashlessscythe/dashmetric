@@ -3,13 +3,16 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { z } from "zod";
+import { ChartType } from "@prisma/client";
 
-const metricSchema = z.object({
+const visualizationSchema = z.object({
   name: z.string().min(1, "Name is required"),
   description: z.string().optional(),
-  value: z.number(),
-  target: z.number().optional(),
-  unit: z.string().optional(),
+  type: z.nativeEnum(ChartType),
+  config: z.record(z.any()),
+  dataConfig: z.record(z.any()),
+  position: z.number(),
+  size: z.string().optional(),
 });
 
 export async function POST(
@@ -38,16 +41,16 @@ export async function POST(
     }
 
     const json = await req.json();
-    const body = metricSchema.parse(json);
+    const body = visualizationSchema.parse(json);
 
-    const metric = await prisma.metric.create({
+    const visualization = await prisma.visualization.create({
       data: {
         ...body,
         dashboardId: id,
       },
     });
 
-    return NextResponse.json(metric);
+    return NextResponse.json(visualization);
   } catch (error) {
     if (error instanceof z.ZodError) {
       return new NextResponse(JSON.stringify(error.errors), { status: 422 });
@@ -70,10 +73,10 @@ export async function DELETE(
     const { id } = resolvedParams;
 
     const url = new URL(req.url);
-    const metricId = url.searchParams.get("metricId");
+    const visualizationId = url.searchParams.get("visualizationId");
 
-    if (!metricId) {
-      return new NextResponse("Metric ID is required", { status: 400 });
+    if (!visualizationId) {
+      return new NextResponse("Visualization ID is required", { status: 400 });
     }
 
     // Verify dashboard exists and belongs to user
@@ -82,31 +85,32 @@ export async function DELETE(
         id,
         userId: session.user.id,
       },
-      include: {
-        metrics: {
-          where: {
-            id: metricId,
-          },
-        },
-      },
     });
 
     if (!dashboard) {
       return new NextResponse("Dashboard not found", { status: 404 });
     }
 
-    if (dashboard.metrics.length === 0) {
-      return new NextResponse("Metric not found", { status: 404 });
+    // Check if visualization exists and belongs to this dashboard
+    const visualization = await prisma.visualization.findUnique({
+      where: {
+        id: visualizationId,
+        dashboardId: id,
+      },
+    });
+
+    if (!visualization) {
+      return new NextResponse("Visualization not found", { status: 404 });
     }
 
-    await prisma.metric.delete({
+    await prisma.visualization.delete({
       where: {
-        id: metricId,
+        id: visualizationId,
       },
     });
 
     return new NextResponse(null, { status: 204 });
-  } catch (error) {
+  } catch (_) {
     return new NextResponse("Internal Server Error", { status: 500 });
   }
 }

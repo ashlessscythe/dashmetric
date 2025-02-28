@@ -2,11 +2,11 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { Prisma } from "@prisma/client";
 import * as fs from "fs";
 import * as path from "path";
 import csvParser from "csv-parser";
 import * as XLSX from "xlsx";
-import { Readable } from "stream";
 import { v4 as uuidv4 } from "uuid";
 
 // Helper function to ensure upload directory exists
@@ -18,28 +18,31 @@ function ensureUploadDir() {
   return uploadDir;
 }
 
+// Define a type for parsed data records
+type DataRecord = Record<string, string | number | null>;
+
 // Helper function to parse CSV data
-async function parseCSV(filePath: string): Promise<any[]> {
+async function parseCSV(filePath: string): Promise<DataRecord[]> {
   return new Promise((resolve, reject) => {
-    const results: any[] = [];
+    const results: DataRecord[] = [];
     fs.createReadStream(filePath)
       .pipe(csvParser())
-      .on("data", (data: any) => results.push(data))
+      .on("data", (data: DataRecord) => results.push(data))
       .on("end", () => resolve(results))
       .on("error", (error: Error) => reject(error));
   });
 }
 
 // Helper function to parse Excel data
-function parseExcel(filePath: string): any[] {
+function parseExcel(filePath: string): DataRecord[] {
   const workbook = XLSX.readFile(filePath);
   const sheetName = workbook.SheetNames[0];
   const worksheet = workbook.Sheets[sheetName];
-  return XLSX.utils.sheet_to_json(worksheet);
+  return XLSX.utils.sheet_to_json(worksheet) as DataRecord[];
 }
 
 // Helper function to parse JSON data
-function parseJSON(filePath: string): any[] {
+function parseJSON(filePath: string): DataRecord[] {
   const fileContent = fs.readFileSync(filePath, "utf8");
   return JSON.parse(fileContent);
 }
@@ -52,10 +55,18 @@ interface SchemaField {
   isDispatcher?: boolean;
 }
 
+// Make sure schema is JSON serializable
+type JsonSchemaField = {
+  type: string;
+  isDate?: boolean;
+  isCarrier?: boolean;
+  isDispatcher?: boolean;
+};
+
 // Helper function to detect check-in data structure and extract key fields
-function processCheckInData(data: any[]): {
-  processedData: any[];
-  schema: Record<string, SchemaField>;
+function processCheckInData(data: DataRecord[]): {
+  processedData: DataRecord[];
+  schema: Record<string, JsonSchemaField>;
 } {
   if (!data || data.length === 0) {
     return { processedData: [], schema: {} };
@@ -114,7 +125,7 @@ function processCheckInData(data: any[]): {
 
   // Process the data to ensure consistent structure
   const processedData = data.map((item) => {
-    const processedItem: Record<string, any> = {};
+    const processedItem: DataRecord = {};
 
     // Process each field according to its type
     Object.entries(item).forEach(([key, value]) => {
@@ -182,7 +193,7 @@ export async function POST(request: NextRequest) {
       fs.writeFileSync(filePath, buffer);
 
       // Parse the file based on its type
-      let parsedData: any[] = [];
+      let parsedData: DataRecord[] = [];
       if (file.name.endsWith(".csv")) {
         parsedData = await parseCSV(filePath);
       } else if (file.name.endsWith(".xlsx") || file.name.endsWith(".xls")) {
@@ -211,8 +222,8 @@ export async function POST(request: NextRequest) {
           data: {
             name: file.name.split(".")[0], // Use the file name without extension as the dataset name
             description: `Uploaded on ${new Date().toLocaleString()}`,
-            data: processedData as any,
-            schema: schema as any,
+            data: processedData as Prisma.InputJsonValue,
+            schema: schema as Prisma.InputJsonValue,
             fileId: uploadedFile.id,
           },
         });
@@ -227,9 +238,13 @@ export async function POST(request: NextRequest) {
 
           // Look for date fields in the schema
           for (const [field, fieldInfo] of Object.entries(schema)) {
-            if (fieldInfo.isDate && item[field]) {
+            if (
+              fieldInfo.isDate &&
+              item[field] &&
+              typeof item[field] !== "boolean"
+            ) {
               try {
-                const parsedDate = new Date(item[field]);
+                const parsedDate = new Date(item[field] as string | number);
                 if (!isNaN(parsedDate.getTime())) {
                   date = parsedDate;
 
@@ -255,7 +270,7 @@ export async function POST(request: NextRequest) {
               carrier,
               dispatcher,
               hour,
-              data: item as any,
+              data: item as Prisma.InputJsonValue,
               datasetId: dataset.id,
             },
           });

@@ -2,16 +2,17 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { ChartType } from "@prisma/client";
+import { ChartType, Prisma } from "@prisma/client";
 
 interface VisualizationRequest {
   name: string;
   type: ChartType;
-  config: any;
+  config: Prisma.InputJsonValue;
   position?: number;
   size?: string;
 }
 
+// Used in dataConfig.fieldMappings
 interface FieldMapping {
   field: string;
   displayName: string;

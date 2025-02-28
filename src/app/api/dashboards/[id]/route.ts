@@ -22,7 +22,7 @@ export async function GET(
         userId: session.user.id,
       },
       include: {
-        metrics: true,
+        visualizations: true,
       },
     });
 
@@ -31,7 +31,7 @@ export async function GET(
     }
 
     return NextResponse.json(dashboard);
-  } catch (error) {
+  } catch (_) {
     return new NextResponse("Internal Server Error", { status: 500 });
   }
 }
@@ -64,7 +64,7 @@ export async function PATCH(
     });
 
     return NextResponse.json(dashboard);
-  } catch (error) {
+  } catch (_) {
     return new NextResponse("Internal Server Error", { status: 500 });
   }
 }
@@ -90,7 +90,7 @@ export async function DELETE(
     });
 
     return new NextResponse(null, { status: 204 });
-  } catch (error) {
+  } catch (_) {
     return new NextResponse("Internal Server Error", { status: 500 });
   }
 }
