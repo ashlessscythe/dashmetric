@@ -110,7 +110,8 @@ export async function DELETE(
     });
 
     return new NextResponse(null, { status: 204 });
-  } catch (_) {
+  } catch (error) {
+    console.error("Error deleting visualization:", error);
     return new NextResponse("Internal Server Error", { status: 500 });
   }
 }

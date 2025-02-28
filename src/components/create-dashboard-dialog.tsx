@@ -46,6 +46,7 @@ export function CreateDashboardDialog({
       router.refresh();
       onClose();
     } catch (error) {
+      console.error("Error creating dashboard:", error);
       toast.error("Failed to create dashboard");
     } finally {
       setIsLoading(false);

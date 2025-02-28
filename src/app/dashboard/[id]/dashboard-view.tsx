@@ -1,5 +1,7 @@
 "use client";
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
@@ -35,25 +37,40 @@ interface User {
   role?: UserRole;
 }
 
+// Define more specific types for visualization config
+interface VisualizationConfig {
+  xAxis?: string;
+  yAxis?: string | string[];
+  field?: string;
+  displayNames?: Record<string, string>;
+  columns?: string[];
+  [key: string]: unknown;
+}
+
 interface Visualization {
   id: string;
   name: string;
   description?: string | null;
   type: ChartType;
-  config: any;
-  dataConfig: any;
+  config: VisualizationConfig;
+  dataConfig: Record<string, unknown>;
   position: number;
   size: string;
   dashboardId: string;
+}
+
+// Define more specific types for dataset items
+interface DatasetItem {
+  [key: string]: string | number | boolean | null;
 }
 
 interface Dataset {
   id: string;
   name: string;
   description?: string | null;
-  data: any[];
-  schema: Record<string, any>;
-  dataEntries?: any[];
+  data: DatasetItem[];
+  schema: Record<string, unknown>;
+  dataEntries?: DatasetItem[];
 }
 
 interface Dashboard {
@@ -96,6 +113,7 @@ const COLORS = [
 
 export function DashboardView({
   dashboard,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   currentUser,
   canEdit,
 }: DashboardViewProps) {
@@ -182,7 +200,7 @@ export function DashboardView({
   };
 
   const renderVisualization = (visualization: Visualization) => {
-    const { type, config, dataConfig } = visualization;
+    const { type, config } = visualization;
     const data = dashboard.dataset?.data || [];
 
     // Get width based on visualization size
@@ -302,24 +320,27 @@ export function DashboardView({
 
       case "PIE":
         // For pie charts, we need to transform the data
-        const pieData = data.reduce((acc: any[], item: any) => {
-          const field = config.field;
-          const value = item[field];
+        const pieData = data.reduce(
+          (acc: Array<{ name: string; value: number }>, item: DatasetItem) => {
+            const field = config.field || "";
+            const value = item[field];
 
-          if (value) {
-            const existingItem = acc.find((i) => i.name === value);
-            if (existingItem) {
-              existingItem.value += 1;
-            } else {
-              acc.push({
-                name: value,
-                value: 1,
-              });
+            if (value) {
+              const existingItem = acc.find((i) => i.name === value);
+              if (existingItem) {
+                existingItem.value += 1;
+              } else {
+                acc.push({
+                  name: String(value),
+                  value: 1,
+                });
+              }
             }
-          }
 
-          return acc;
-        }, []);
+            return acc;
+          },
+          []
+        );
 
         return (
           <div key={visualization.id} className={`${getWidth()} p-4`}>
@@ -342,7 +363,7 @@ export function DashboardView({
                         `${name}: ${(percent * 100).toFixed(0)}%`
                       }
                     >
-                      {pieData.map((entry: any, index: number) => (
+                      {pieData.map((entry, index: number) => (
                         <Cell
                           key={`cell-${index}`}
                           fill={COLORS[index % COLORS.length]}
@@ -627,7 +648,7 @@ export function DashboardView({
                 No visualizations yet
               </h3>
               <p className="text-gray-500 dark:text-gray-400 mb-4">
-                This dashboard doesn't have any visualizations yet.
+                This dashboard doesn&apos;t have any visualizations yet.
               </p>
               {canEdit && (
                 <Button

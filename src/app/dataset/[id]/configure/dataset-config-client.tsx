@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { ChartType } from "@prisma/client";
-import { Loader2, ChevronDown, Check } from "lucide-react";
+import { Loader2 } from "lucide-react";
 
 interface SchemaField {
   type: string;
@@ -14,6 +14,7 @@ interface SchemaField {
   isDispatcher?: boolean;
 }
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
 interface Dataset {
   id: string;
   name: string;
@@ -48,6 +49,7 @@ interface FieldMapping {
 
 export function DatasetConfigClient({
   dataset,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   user,
 }: DatasetConfigClientProps) {
   const router = useRouter();

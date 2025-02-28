@@ -57,7 +57,9 @@ export default async function DatasetConfigPage({
     id: dataset.id,
     name: dataset.name,
     description: dataset.description,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     data: dataset.data as any[],
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     schema: dataset.schema as Record<string, any>,
     file: {
       id: dataset.file.id,

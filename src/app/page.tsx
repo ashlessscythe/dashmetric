@@ -7,7 +7,6 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import Link from "next/link";
-import { Header } from "@/components/header";
 import { Container } from "@/components/ui/container";
 import {
   BarChart3Icon,

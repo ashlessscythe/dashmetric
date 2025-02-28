@@ -54,6 +54,7 @@ export function CreateMetricDialog({
       router.refresh();
       onClose();
     } catch (error) {
+      console.error("Error creating metric:", error);
       toast.error("Failed to create metric");
     } finally {
       setIsLoading(false);

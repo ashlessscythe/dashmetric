@@ -82,7 +82,8 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
   }
 
   // Prepare the data for the client component
-  const clientDashboard = {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const clientDashboard: any = {
     id: dashboard.id,
     name: dashboard.name,
     description: dashboard.description,
@@ -101,7 +102,9 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
           id: dashboard.dataset.id,
           name: dashboard.dataset.name,
           description: dashboard.dataset.description,
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           data: dashboard.dataset.data as any[],
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           schema: dashboard.dataset.schema as Record<string, any>,
           dataEntries: dashboard.dataset.dataEntries?.map((entry) => ({
             ...entry,

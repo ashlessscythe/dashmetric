@@ -13,6 +13,7 @@ interface VisualizationRequest {
 }
 
 // Used in dataConfig.fieldMappings
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 interface FieldMapping {
   field: string;
   displayName: string;

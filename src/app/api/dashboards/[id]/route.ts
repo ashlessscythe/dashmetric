@@ -31,7 +31,8 @@ export async function GET(
     }
 
     return NextResponse.json(dashboard);
-  } catch (_) {
+  } catch (error) {
+    console.error("Error fetching dashboard:", error);
     return new NextResponse("Internal Server Error", { status: 500 });
   }
 }
@@ -64,7 +65,8 @@ export async function PATCH(
     });
 
     return NextResponse.json(dashboard);
-  } catch (_) {
+  } catch (error) {
+    console.error("Error updating dashboard:", error);
     return new NextResponse("Internal Server Error", { status: 500 });
   }
 }
@@ -90,7 +92,8 @@ export async function DELETE(
     });
 
     return new NextResponse(null, { status: 204 });
-  } catch (_) {
+  } catch (error) {
+    console.error("Error deleting dashboard:", error);
     return new NextResponse("Internal Server Error", { status: 500 });
   }
 }
