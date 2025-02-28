@@ -16,6 +16,15 @@ enum UserRole {
   PENDING
 }
 
+enum ChartType {
+  BAR
+  LINE
+  PIE
+  AREA
+  SCATTER
+  TABLE
+}
+
 model User {
   id            String      @id @default(cuid())
   name          String
@@ -25,6 +34,8 @@ model User {
   createdAt     DateTime    @default(now())
   updatedAt     DateTime    @updatedAt
   dashboards    Dashboard[]
+  uploadedFiles UploadedFile[]
+  sharedDashboards DashboardShare[] @relation("SharedWith")
 
   @@map("users")
 }
@@ -33,26 +44,89 @@ model Dashboard {
   id          String    @id @default(cuid())
   name        String
   description String?
+  isPublic    Boolean   @default(false)
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
   userId      String
   user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  metrics     Metric[]
+  visualizations Visualization[]
+  datasetId   String?
+  dataset     Dataset?  @relation(fields: [datasetId], references: [id], onDelete: SetNull)
+  shares      DashboardShare[]
 
   @@map("dashboards")
 }
 
-model Metric {
+model DashboardShare {
+  id          String    @id @default(cuid())
+  dashboardId String
+  dashboard   Dashboard @relation(fields: [dashboardId], references: [id], onDelete: Cascade)
+  userId      String
+  user        User      @relation("SharedWith", fields: [userId], references: [id], onDelete: Cascade)
+  createdAt   DateTime  @default(now())
+  
+  @@unique([dashboardId, userId])
+  @@map("dashboard_shares")
+}
+
+model Visualization {
   id          String    @id @default(cuid())
   name        String
   description String?
-  value       Float
-  target      Float?
-  unit        String?
+  type        ChartType
+  config      Json      // Stores chart configuration (axes, colors, etc.)
+  dataConfig  Json      // Stores data mapping configuration
+  position    Int       // Position in the dashboard layout
+  size        String    @default("md") // Size of the visualization (sm, md, lg, xl)
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
   dashboardId String
   dashboard   Dashboard @relation(fields: [dashboardId], references: [id], onDelete: Cascade)
 
-  @@map("metrics")
+  @@map("visualizations")
+}
+
+model UploadedFile {
+  id          String    @id @default(cuid())
+  filename    String
+  originalName String
+  mimeType    String
+  size        Int
+  createdAt   DateTime  @default(now())
+  userId      String
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  datasets    Dataset[]
+
+  @@map("uploaded_files")
+}
+
+model Dataset {
+  id          String    @id @default(cuid())
+  name        String
+  description String?
+  data        Json      // Stores the processed data
+  schema      Json      // Stores the schema of the data
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  fileId      String
+  file        UploadedFile @relation(fields: [fileId], references: [id], onDelete: Cascade)
+  dashboards  Dashboard[]
+  dataEntries DataEntry[]
+
+  @@map("datasets")
+}
+
+model DataEntry {
+  id          String    @id @default(cuid())
+  date        DateTime
+  carrier     String?
+  dispatcher  String?
+  hour        Int?
+  data        Json      // Stores the raw data entry
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  datasetId   String
+  dataset     Dataset   @relation(fields: [datasetId], references: [id], onDelete: Cascade)
+
+  @@map("data_entries")
 }

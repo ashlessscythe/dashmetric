@@ -1,0 +1,906 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>2025 Check-In Dashboard</title>
+  
+  <!-- Import React, React DOM, and Recharts from CDN -->
+  <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/prop-types@15.8.1/prop-types.js"></script>
+  <script src="https://unpkg.com/recharts@2.7.2/umd/Recharts.js"></script>
+  <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100">
+  <div id="root" class="container mx-auto py-8 px-4"></div>
+
+  <script type="text/babel">
+    // Destructure components from Recharts
+    const {
+      BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, 
+      ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line
+    } = Recharts;
+    
+    // Main dashboard component
+    const CheckInDashboard = () => {
+      const [activeTab, setActiveTab] = React.useState('daily');
+      const [activeMonth, setActiveMonth] = React.useState('february');
+
+      // ==================== FEBRUARY DATA ====================
+      
+      // Data for daily check-ins - February
+      const febDailyCheckIns = [
+        { date: '02-01', total: 19, FMXH: 7, FSEO: 2, SIET: 4, SVLD: 4, TSVO: 2, AIBL: 0, NOED: 0 },
+        { date: '02-03', total: 20, FMXH: 12, FSEO: 0, SIET: 1, SVLD: 5, TSVO: 1, AIBL: 1, NOED: 0 },
+        { date: '02-04', total: 20, FMXH: 7, FSEO: 3, SIET: 4, SVLD: 4, TSVO: 1, AIBL: 1, NOED: 0 },
+        { date: '02-05', total: 26, FMXH: 8, FSEO: 2, SIET: 6, SVLD: 6, TSVO: 2, AIBL: 2, NOED: 0 },
+        { date: '02-06', total: 35, FMXH: 14, FSEO: 2, SIET: 8, SVLD: 9, TSVO: 1, AIBL: 1, NOED: 0 },
+        { date: '02-07', total: 34, FMXH: 12, FSEO: 3, SIET: 4, SVLD: 9, TSVO: 4, AIBL: 2, NOED: 0 },
+        { date: '02-08', total: 14, FMXH: 6, FSEO: 1, SIET: 4, SVLD: 3, TSVO: 0, AIBL: 0, NOED: 0 },
+        { date: '02-10', total: 13, FMXH: 6, FSEO: 2, SIET: 0, SVLD: 1, TSVO: 3, AIBL: 1, NOED: 0 },
+        { date: '02-11', total: 20, FMXH: 9, FSEO: 3, SIET: 1, SVLD: 5, TSVO: 2, AIBL: 0, NOED: 0 },
+        { date: '02-12', total: 40, FMXH: 17, FSEO: 4, SIET: 8, SVLD: 5, TSVO: 3, AIBL: 3, NOED: 0 },
+        { date: '02-13', total: 49, FMXH: 21, FSEO: 1, SIET: 13, SVLD: 12, TSVO: 1, AIBL: 1, NOED: 0 },
+        { date: '02-14', total: 32, FMXH: 14, FSEO: 2, SIET: 5, SVLD: 7, TSVO: 2, AIBL: 2, NOED: 0 },
+        { date: '02-15', total: 24, FMXH: 12, FSEO: 1, SIET: 3, SVLD: 6, TSVO: 2, AIBL: 0, NOED: 0 },
+        { date: '02-17', total: 37, FMXH: 14, FSEO: 5, SIET: 5, SVLD: 5, TSVO: 4, AIBL: 1, NOED: 3 },
+        { date: '02-18', total: 28, FMXH: 8, FSEO: 3, SIET: 7, SVLD: 9, TSVO: 0, AIBL: 1, NOED: 0 },
+        { date: '02-19', total: 33, FMXH: 10, FSEO: 4, SIET: 6, SVLD: 10, TSVO: 1, AIBL: 2, NOED: 0 },
+        { date: '02-20', total: 35, FMXH: 19, FSEO: 1, SIET: 7, SVLD: 6, TSVO: 1, AIBL: 1, NOED: 0 }
+      ];
+
+      // Data for carrier distribution - February
+      const febCarrierDistribution = [
+        { name: 'FMXH', value: 196 },
+        { name: 'SVLD', value: 106 },
+        { name: 'SIET', value: 86 },
+        { name: 'FSEO', value: 39 },
+        { name: 'TSVO', value: 30 },
+        { name: 'AIBL', value: 19 },
+        { name: 'NOED', value: 3 }
+      ];
+
+      // Data for hourly check-ins - February
+      const febHourlyCheckIns = [
+        { hour: '12 AM', total: 0 },
+        { hour: '1 AM', total: 1 },
+        { hour: '2 AM', total: 1 },
+        { hour: '3 AM', total: 0 },
+        { hour: '4 AM', total: 0 },
+        { hour: '5 AM', total: 0 },
+        { hour: '6 AM', total: 1 },
+        { hour: '7 AM', total: 27 },
+        { hour: '8 AM', total: 46 },
+        { hour: '9 AM', total: 18 },
+        { hour: '10 AM', total: 21 },
+        { hour: '11 AM', total: 30 },
+        { hour: '12 PM', total: 36 },
+        { hour: '1 PM', total: 47 },
+        { hour: '2 PM', total: 32 },
+        { hour: '3 PM', total: 19 },
+        { hour: '4 PM', total: 29 },
+        { hour: '5 PM', total: 16 },
+        { hour: '6 PM', total: 22 },
+        { hour: '7 PM', total: 31 },
+        { hour: '8 PM', total: 26 },
+        { hour: '9 PM', total: 35 },
+        { hour: '10 PM', total: 38 },
+        { hour: '11 PM', total: 3 }
+      ];
+
+      // Data for daily check-ins by day of week - February
+      const febDayOfWeekCheckIns = [
+        { day: 'Sunday', total: 0 },
+        { day: 'Monday', total: 70 },
+        { day: 'Tuesday', total: 68 },
+        { day: 'Wednesday', total: 99 },
+        { day: 'Thursday', total: 119 },
+        { day: 'Friday', total: 66 },
+        { day: 'Saturday', total: 57 }
+      ];
+
+      // Data for weekly check-ins - February
+      const febWeeklyCheckIns = [
+        { week: 'Week 1 (Jan 26-Feb 1)', total: 19 },
+        { week: 'Week 2 (Feb 2-8)', total: 149 },
+        { week: 'Week 3 (Feb 9-15)', total: 178 },
+        { week: 'Week 4 (Feb 16-20)', total: 133 }
+      ];
+
+      // Weekly check-ins by carrier - February
+      const febWeeklyByCarrier = [
+        { week: 'Week 1', FMXH: 7, FSEO: 2, SIET: 4, SVLD: 4, TSVO: 2, AIBL: 0, NOED: 0 },
+        { week: 'Week 2', FMXH: 59, FSEO: 11, SIET: 27, SVLD: 36, TSVO: 9, AIBL: 7, NOED: 0 },
+        { week: 'Week 3', FMXH: 79, FSEO: 13, SIET: 30, SVLD: 36, TSVO: 13, AIBL: 7, NOED: 0 },
+        { week: 'Week 4', FMXH: 51, FSEO: 13, SIET: 25, SVLD: 30, TSVO: 6, AIBL: 5, NOED: 3 }
+      ];
+
+      // Data for dispatchers - February
+      const febDispatcherData = [
+        { name: '600126644', value: 160 },
+        { name: '600149188', value: 140 },
+        { name: '600222246', value: 81 },
+        { name: '600163625', value: 77 },
+        { name: '600140778', value: 16 },
+        { name: '600103036', value: 4 },
+        { name: '600243761', value: 1 }
+      ];
+
+      // ==================== JANUARY DATA ====================
+      
+      // Data for daily check-ins - January
+      const janDailyCheckIns = [
+        { date: '01-06', total: 5, FMXH: 0, FSEO: 1, SIET: 1, SVLD: 3, TSVO: 0, AIBL: 0, NOED: 0 },
+        { date: '01-07', total: 25, FMXH: 13, FSEO: 1, SIET: 2, SVLD: 7, TSVO: 1, AIBL: 1, NOED: 0 },
+        { date: '01-08', total: 32, FMXH: 15, FSEO: 3, SIET: 5, SVLD: 7, TSVO: 0, AIBL: 2, NOED: 0 },
+        { date: '01-09', total: 21, FMXH: 9, FSEO: 1, SIET: 4, SVLD: 5, TSVO: 2, AIBL: 0, NOED: 0 },
+        { date: '01-10', total: 28, FMXH: 12, FSEO: 3, SIET: 5, SVLD: 6, TSVO: 2, AIBL: 0, NOED: 0 },
+        { date: '01-11', total: 13, FMXH: 7, FSEO: 0, SIET: 2, SVLD: 3, TSVO: 1, AIBL: 0, NOED: 0 },
+        { date: '01-13', total: 35, FMXH: 19, FSEO: 4, SIET: 6, SVLD: 2, TSVO: 3, AIBL: 1, NOED: 0 },
+        { date: '01-14', total: 25, FMXH: 10, FSEO: 2, SIET: 5, SVLD: 6, TSVO: 1, AIBL: 1, NOED: 0 },
+        { date: '01-15', total: 30, FMXH: 13, FSEO: 2, SIET: 7, SVLD: 6, TSVO: 2, AIBL: 0, NOED: 0 },
+        { date: '01-16', total: 31, FMXH: 16, FSEO: 2, SIET: 7, SVLD: 4, TSVO: 1, AIBL: 1, NOED: 0 },
+        { date: '01-17', total: 29, FMXH: 13, FSEO: 3, SIET: 5, SVLD: 5, TSVO: 1, AIBL: 2, NOED: 0 },
+        { date: '01-18', total: 13, FMXH: 7, FSEO: 0, SIET: 2, SVLD: 3, TSVO: 1, AIBL: 0, NOED: 0 },
+        { date: '01-20', total: 33, FMXH: 16, FSEO: 3, SIET: 4, SVLD: 5, TSVO: 4, AIBL: 1, NOED: 0 },
+        { date: '01-21', total: 28, FMXH: 9, FSEO: 3, SIET: 6, SVLD: 8, TSVO: 1, AIBL: 1, NOED: 0 },
+        { date: '01-22', total: 34, FMXH: 16, FSEO: 3, SIET: 5, SVLD: 7, TSVO: 1, AIBL: 2, NOED: 0 },
+        { date: '01-23', total: 32, FMXH: 11, FSEO: 1, SIET: 10, SVLD: 7, TSVO: 2, AIBL: 1, NOED: 0 },
+        { date: '01-24', total: 31, FMXH: 15, FSEO: 5, SIET: 3, SVLD: 6, TSVO: 1, AIBL: 1, NOED: 0 },
+        { date: '01-25', total: 12, FMXH: 5, FSEO: 0, SIET: 3, SVLD: 3, TSVO: 1, AIBL: 0, NOED: 0 },
+        { date: '01-27', total: 30, FMXH: 13, FSEO: 3, SIET: 5, SVLD: 5, TSVO: 3, AIBL: 1, NOED: 0 },
+        { date: '01-28', total: 28, FMXH: 9, FSEO: 3, SIET: 7, SVLD: 7, TSVO: 1, AIBL: 1, NOED: 0 },
+        { date: '01-29', total: 32, FMXH: 14, FSEO: 2, SIET: 6, SVLD: 7, TSVO: 1, AIBL: 2, NOED: 0 },
+        { date: '01-30', total: 30, FMXH: 14, FSEO: 2, SIET: 5, SVLD: 6, TSVO: 2, AIBL: 1, NOED: 0 },
+        { date: '01-31', total: 32, FMXH: 17, FSEO: 1, SIET: 6, SVLD: 5, TSVO: 2, AIBL: 1, NOED: 0 }
+      ];
+
+      // Data for carrier distribution - January
+      const janCarrierDistribution = [
+        { name: 'FMXH', value: 258 },
+        { name: 'SVLD', value: 110 },
+        { name: 'SIET', value: 98 },
+        { name: 'FSEO', value: 47 },
+        { name: 'TSVO', value: 31 },
+        { name: 'AIBL', value: 19 },
+        { name: 'GMRL', value: 6 }
+      ];
+
+      // Data for hourly check-ins - January
+      const janHourlyCheckIns = [
+        { hour: '12 AM', total: 1 },
+        { hour: '1 AM', total: 2 },
+        { hour: '2 AM', total: 1 },
+        { hour: '3 AM', total: 0 },
+        { hour: '4 AM', total: 0 },
+        { hour: '5 AM', total: 0 },
+        { hour: '6 AM', total: 0 },
+        { hour: '7 AM', total: 32 },
+        { hour: '8 AM', total: 38 },
+        { hour: '9 AM', total: 20 },
+        { hour: '10 AM', total: 25 },
+        { hour: '11 AM', total: 35 },
+        { hour: '12 PM', total: 42 },
+        { hour: '1 PM', total: 50 },
+        { hour: '2 PM', total: 35 },
+        { hour: '3 PM', total: 25 },
+        { hour: '4 PM', total: 32 },
+        { hour: '5 PM', total: 20 },
+        { hour: '6 PM', total: 25 },
+        { hour: '7 PM', total: 28 },
+        { hour: '8 PM', total: 35 },
+        { hour: '9 PM', total: 45 },
+        { hour: '10 PM', total: 52 },
+        { hour: '11 PM', total: 6 }
+      ];
+
+      // Data for daily check-ins by day of week - January
+      const janDayOfWeekCheckIns = [
+        { day: 'Sunday', total: 0 },
+        { day: 'Monday', total: 98 },
+        { day: 'Tuesday', total: 85 },
+        { day: 'Wednesday', total: 96 },
+        { day: 'Thursday', total: 114 },
+        { day: 'Friday', total: 88 },
+        { day: 'Saturday', total: 38 }
+      ];
+
+      // Data for weekly check-ins - January
+      const janWeeklyCheckIns = [
+        { week: 'Week 1 (Jan 1-7)', total: 30 },
+        { week: 'Week 2 (Jan 8-14)', total: 154 },
+        { week: 'Week 3 (Jan 15-21)', total: 164 },
+        { week: 'Week 4 (Jan 22-28)', total: 167 },
+        { week: 'Week 5 (Jan 29-31)', total: 94 }
+      ];
+
+      // Weekly check-ins by carrier - January
+      const janWeeklyByCarrier = [
+        { week: 'Week 1', FMXH: 13, FSEO: 2, SIET: 3, SVLD: 10, TSVO: 1, AIBL: 1, GMRL: 0 },
+        { week: 'Week 2', FMXH: 66, FSEO: 13, SIET: 23, SVLD: 34, TSVO: 10, AIBL: 4, GMRL: 4 },
+        { week: 'Week 3', FMXH: 74, FSEO: 11, SIET: 25, SVLD: 34, TSVO: 10, AIBL: 8, GMRL: 2 },
+        { week: 'Week 4', FMXH: 60, FSEO: 17, SIET: 35, SVLD: 27, TSVO: 8, AIBL: 5, GMRL: 0 },
+        { week: 'Week 5', FMXH: 45, FSEO: 4, SIET: 12, SVLD: 20, TSVO: 2, AIBL: 1, GMRL: 0 }
+      ];
+
+      // Data for dispatchers - January
+      const janDispatcherData = [
+        { name: '600126644', value: 145 },
+        { name: '600149188', value: 155 },
+        { name: '600222246', value: 95 },
+        { name: '600163625', value: 120 },
+        { name: '600140778', value: 10 },
+        { name: '600103036', value: 4 }
+      ];
+
+      // Colors for carriers
+      const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8', '#82ca9d', '#ffc658'];
+
+      // Get the active month's data
+      const dailyCheckIns = activeMonth === 'february' ? febDailyCheckIns : janDailyCheckIns;
+      const carrierDistribution = activeMonth === 'february' ? febCarrierDistribution : janCarrierDistribution;
+      const hourlyCheckIns = activeMonth === 'february' ? febHourlyCheckIns : janHourlyCheckIns;
+      const dayOfWeekCheckIns = activeMonth === 'february' ? febDayOfWeekCheckIns : janDayOfWeekCheckIns;
+      const weeklyCheckIns = activeMonth === 'february' ? febWeeklyCheckIns : janWeeklyCheckIns;
+      const weeklyByCarrier = activeMonth === 'february' ? febWeeklyByCarrier : janWeeklyByCarrier;
+      const dispatcherData = activeMonth === 'february' ? febDispatcherData : janDispatcherData;
+
+      // Key statistics
+      const keyStats = {
+        february: {
+          totalCheckIns: 479,
+          dailyAverage: 28.2,
+          peakDay: "February 13 (49 check-ins)",
+          busiestDay: "Thursday (119 check-ins)"
+        },
+        january: {
+          totalCheckIns: 569,
+          dailyAverage: 24.7,
+          peakDay: "January 20 (33 check-ins)",
+          busiestDay: "Thursday (114 check-ins)"
+        }
+      };
+
+      // Time pattern insights
+      const timeInsights = {
+        february: [
+          "Morning peak (7-8 AM): Primarily FMXH trailers",
+          "Midday peak (1 PM): Mixed carriers with good representation across all types",
+          "Evening peak (9-10 PM): Dominated by SIET and SVLD carriers",
+          "Very few overnight check-ins (11 PM - 6 AM): Only 7 check-ins during this period",
+          "Three distinct check-in windows: morning (7-9 AM), midday (11 AM-2 PM), and evening (7-10 PM)"
+        ],
+        january: [
+          "Morning peak (7-8 AM): Primarily FMXH trailers",
+          "Midday peak (12-1 PM): Mixed carriers with good representation across all types",
+          "Evening peak (9-10 PM): Dominated by SIET and SVLD carriers",
+          "Very few overnight check-ins (11 PM - 6 AM): Only 10 check-ins during this period",
+          "Three distinct check-in windows: morning (7-9 AM), midday (11 AM-2 PM), and evening (8-10 PM)"
+        ]
+      };
+
+      // Weekly trends
+      const weeklyTrends = {
+        february: [
+          "Week 1 (Jan 26-Feb 1): Low volume (19 check-ins) as it only includes February 1st",
+          "Week 2 (Feb 2-8): Consistent volume with 149 check-ins, average of 24.8 per day",
+          "Week 3 (Feb 9-15): Peak volume with 178 check-ins, average of 29.7 per day",
+          "Week 4 (Feb 16-20): Strong volume with 133 check-ins over just 5 days, average of 26.6 per day",
+          "FMXH carrier: Shows steady week-over-week growth until Week 4",
+          "SIET & SVLD carriers: Maintained consistent volumes in Weeks 2-4",
+          "NOED carrier: Only appeared in Week 4, suggesting a new carrier relationship",
+          "Overall trend: Volume peaked in Week 3, but daily averages were highest in Week 4"
+        ],
+        january: [
+          "Week 1 (Jan 1-7): Low volume (30 check-ins) as it only includes partial week",
+          "Week 2 (Jan 8-14): Strong volume with 154 check-ins, average of 25.7 per day",
+          "Week 3 (Jan 15-21): Peak volume with 164 check-ins, average of 27.3 per day",
+          "Week 4 (Jan 22-28): Consistent volume with 167 check-ins, average of 27.8 per day",
+          "Week 5 (Jan 29-31): Strong volume with 94 check-ins over just 3 days, average of 31.3 per day",
+          "FMXH carrier: Consistent volume throughout the month",
+          "SIET carrier: Increased volume in Week 4",
+          "GMRL carrier: Only appeared in Weeks 2 and 3",
+          "Overall trend: Steady increase in daily averages throughout the month"
+        ]
+      };
+
+      // Carrier insights
+      const carrierInsights = {
+        february: {
+          peakDays: [
+            { carrier: "FMXH", peak: "Feb 13 (21 check-ins)" },
+            { carrier: "SVLD", peak: "Feb 13 (12 check-ins)" },
+            { carrier: "SIET", peak: "Feb 13 (13 check-ins)" },
+            { carrier: "FSEO", peak: "Feb 17 (5 check-ins)" },
+            { carrier: "TSVO", peak: "Feb 07 (4 check-ins)" },
+            { carrier: "AIBL", peak: "Feb 12 (3 check-ins)" },
+            { carrier: "NOED", peak: "Feb 17 (3 check-ins)" }
+          ],
+          notes: [
+            { carrier: "FMXH", note: "IB FG FV59, IB FG FV56" },
+            { carrier: "SVLD", note: "IB FG FV58, IB FG FV50" },
+            { carrier: "SIET", note: "IB FG FV33, IB FG FV38" },
+            { carrier: "FSEO", note: "IB FG FV52" },
+            { carrier: "TSVO", note: "IB FG FW61" }
+          ]
+        },
+        january: {
+          peakDays: [
+            { carrier: "FMXH", peak: "Jan 13 (19 check-ins)" },
+            { carrier: "SVLD", peak: "Jan 21 (8 check-ins)" },
+            { carrier: "SIET", peak: "Jan 23 (10 check-ins)" },
+            { carrier: "FSEO", peak: "Jan 24 (5 check-ins)" },
+            { carrier: "TSVO", peak: "Jan 20 (4 check-ins)" },
+            { carrier: "AIBL", peak: "Jan 17 (2 check-ins)" },
+            { carrier: "GMRL", peak: "Jan 14 (2 check-ins)" }
+          ],
+          notes: [
+            { carrier: "FMXH", note: "IB FG FV59, IB FG FV56" },
+            { carrier: "SVLD", note: "IB FG FV58, IB FG FV50" },
+            { carrier: "SIET", note: "IB FG FV33, IB FG FV38" },
+            { carrier: "FSEO", note: "IB FG FV52" },
+            { carrier: "TSVO", note: "IB FG FW61" }
+          ]
+        }
+      };
+
+      // Month-to-month comparison insights
+      const monthComparisonInsights = [
+        "Total check-ins decreased from January (569) to February (479)",
+        "Daily average increased from January (24.7) to February (28.2)",
+        "Thursday remained the busiest day of the week in both months",
+        "FMXH remained the dominant carrier in both months, but decreased from 45% to 41% of total",
+        "SIET and SVLD maintained similar proportions in both months",
+        "NOED carrier appeared in February but not in January",
+        "GMRL carrier appeared in January but not in February",
+        "Both months show similar time patterns with morning, midday, and evening peaks",
+        "February had a more pronounced peak day (Feb 13 with 49 check-ins) compared to January's more consistent daily volumes"
+      ];
+
+      return (
+        <div className="w-full p-4 bg-gray-50">
+          <h1 className="text-2xl font-bold mb-6 text-center">2025 Check-In Report Dashboard</h1>
+          
+          {/* Month Selector */}
+          <div className="mb-6">
+            <div className="flex justify-center mb-2">
+              <div className="inline-flex rounded-md shadow-sm" role="group">
+                <button
+                  type="button"
+                  className={`px-4 py-2 text-sm font-medium rounded-l-lg ${activeMonth === 'january' ? 'bg-blue-600 text-white' : 'bg-white text-gray-700 hover:bg-gray-100'}`}
+                  onClick={() => setActiveMonth('january')}
+                >
+                  January 2025
+                </button>
+                <button
+                  type="button"
+                  className={`px-4 py-2 text-sm font-medium rounded-r-lg ${activeMonth === 'february' ? 'bg-blue-600 text-white' : 'bg-white text-gray-700 hover:bg-gray-100'}`}
+                  onClick={() => setActiveMonth('february')}
+                >
+                  February 2025
+                </button>
+              </div>
+            </div>
+          </div>
+          
+          <div className="mb-4">
+            <div className="flex mb-2 bg-gray-200 p-1 rounded-lg">
+              <button 
+                className={`flex-1 py-2 px-4 rounded ${activeTab === 'daily' ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
+                onClick={() => setActiveTab('daily')}
+              >
+                Daily Check-Ins
+              </button>
+              <button 
+                className={`flex-1 py-2 px-4 rounded ${activeTab === 'carriers' ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
+                onClick={() => setActiveTab('carriers')}
+              >
+                Carriers
+              </button>
+              <button 
+                className={`flex-1 py-2 px-4 rounded ${activeTab === 'hourly' ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
+                onClick={() => setActiveTab('hourly')}
+              >
+                Hourly Patterns
+              </button>
+              <button 
+                className={`flex-1 py-2 px-4 rounded ${activeTab === 'weekly' ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
+                onClick={() => setActiveTab('weekly')}
+              >
+                Weekly Analysis
+              </button>
+              <button 
+                className={`flex-1 py-2 px-4 rounded ${activeTab === 'comparison' ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
+                onClick={() => setActiveTab('comparison')}
+              >
+                Month Comparison
+              </button>
+            </div>
+          </div>
+          
+          {/* Daily Check-ins Tab */}
+          {activeTab === 'daily' && (
+            <div>
+              <div className="bg-white p-4 rounded-lg shadow mb-4">
+                <h2 className="text-lg font-semibold mb-2">Daily Check-ins ({activeMonth === 'february' ? 'February' : 'January'} 2025)</h2>
+                <ResponsiveContainer width="100%" height={300}>
+                  <BarChart data={dailyCheckIns}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="date" />
+                    <YAxis />
+                    <Tooltip />
+                    <Legend />
+                    <Bar dataKey="total" fill="#8884d8" />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+              
+              <div className="bg-white p-4 rounded-lg shadow mb-4">
+                <h2 className="text-lg font-semibold mb-2">Check-ins by Day of Week</h2>
+                <ResponsiveContainer width="100%" height={300}>
+                  <BarChart data={dayOfWeekCheckIns}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="day" />
+                    <YAxis />
+                    <Tooltip />
+                    <Legend />
+                    <Bar dataKey="total" fill="#82ca9d" />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="bg-white p-4 rounded-lg shadow">
+                  <h2 className="text-lg font-semibold mb-2">Key Statistics</h2>
+                  <div className="grid grid-cols-2 gap-2">
+                    <div className="bg-blue-50 p-2 rounded">
+                      <p className="text-sm text-gray-600">Total Check-ins</p>
+                      <p className="text-xl font-bold">{keyStats[activeMonth].totalCheckIns}</p>
+                    </div>
+                    <div className="bg-green-50 p-2 rounded">
+                      <p className="text-sm text-gray-600">Average Daily</p>
+                      <p className="text-xl font-bold">{keyStats[activeMonth].dailyAverage}</p>
+                    </div>
+                    <div className="bg-yellow-50 p-2 rounded">
+                      <p className="text-sm text-gray-600">Peak Day</p>
+                      <p className="text-xl font-bold">{keyStats[activeMonth].peakDay}</p>
+                    </div>
+                    <div className="bg-purple-50 p-2 rounded">
+                      <p className="text-sm text-gray-600">Busiest Day</p>
+                      <p className="text-xl font-bold">{keyStats[activeMonth].busiestDay}</p>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="bg-white p-4 rounded-lg shadow">
+                  <h2 className="text-lg font-semibold mb-2">Dispatcher Distribution</h2>
+                  <ResponsiveContainer width="100%" height={200}>
+                    <PieChart>
+                      <Pie
+                        data={dispatcherData}
+                        cx="50%"
+                        cy="50%"
+                        labelLine={false}
+                        outerRadius={80}
+                        fill="#8884d8"
+                        dataKey="value"
+                        label={({name, percent}) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                      >
+                        {dispatcherData.map((entry, index) => (
+                          <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                        ))}
+                      </Pie>
+                      <Tooltip />
+                    </PieChart>
+                  </ResponsiveContainer>
+                </div>
+              </div>
+            </div>
+          )}
+          
+          {/* Carriers Tab */}
+          {activeTab === 'carriers' && (
+            <div>
+              <div className="bg-white p-4 rounded-lg shadow mb-4">
+                <h2 className="text-lg font-semibold mb-2">Carrier Distribution</h2>
+                <ResponsiveContainer width="100%" height={300}>
+                  <PieChart>
+                    <Pie
+                      data={carrierDistribution}
+                      cx="50%"
+                      cy="50%"
+                      labelLine={true}
+                      outerRadius={100}
+                      fill="#8884d8"
+                      dataKey="value"
+                      label={({name, value}) => `${name}: ${value} (${((value/keyStats[activeMonth].totalCheckIns)*100).toFixed(1)}%)`}
+                    >
+                      {carrierDistribution.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                      ))}
+                    </Pie>
+                    <Tooltip />
+                  </PieChart>
+                </ResponsiveContainer>
+              </div>
+              
+              <div className="bg-white p-4 rounded-lg shadow mb-4">
+                <h2 className="text-lg font-semibold mb-2">Daily Check-ins by Carrier</h2>
+                <ResponsiveContainer width="100%" height={400}>
+                  <BarChart data={dailyCheckIns}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="date" />
+                    <YAxis />
+                    <Tooltip />
+                    <Legend />
+                    <Bar dataKey="FMXH" fill="#0088FE" />
+                    <Bar dataKey="SVLD" fill="#00C49F" />
+                    <Bar dataKey="SIET" fill="#FFBB28" />
+                    <Bar dataKey="FSEO" fill="#FF8042" />
+                    <Bar dataKey="TSVO" fill="#8884d8" />
+                    <Bar dataKey="AIBL" fill="#82ca9d" />
+                    {activeMonth === 'february' ? 
+                      <Bar dataKey="NOED" fill="#ffc658" /> : 
+                      <Bar dataKey="GMRL" fill="#ffc658" />
+                    }
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+              
+              <div className="bg-white p-4 rounded-lg shadow">
+                <h2 className="text-lg font-semibold mb-2">Carrier Insights</h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <h3 className="text-md font-medium mb-1">Peak Days by Carrier</h3>
+                    <ul className="text-sm">
+                      {carrierInsights[activeMonth].peakDays.map((item, index) => (
+                        <li key={index} className="mb-1">
+                          <span className="font-semibold">{item.carrier}:</span> {item.peak}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                  <div>
+                    <h3 className="text-md font-medium mb-1">Common Check-in Notes</h3>
+                    <ul className="text-sm">
+                      {carrierInsights[activeMonth].notes.map((item, index) => (
+                        <li key={index} className="mb-1">
+                          <span className="font-semibold">{item.carrier}:</span> {item.note}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+          
+          {/* Hourly Patterns Tab */}
+          {activeTab === 'hourly' && (
+            <div>
+              <div className="bg-white p-4 rounded-lg shadow mb-4">
+                <h2 className="text-lg font-semibold mb-2">Hourly Check-in Distribution</h2>
+                <ResponsiveContainer width="100%" height={300}>
+                  <BarChart data={hourlyCheckIns}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="hour" />
+                    <YAxis />
+                    <Tooltip />
+                    <Legend />
+                    <Bar dataKey="total" fill="#8884d8" />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                <div className="bg-white p-4 rounded-lg shadow">
+                  <h2 className="text-lg font-semibold mb-2">Peak Check-in Hours</h2>
+                  <div className="overflow-x-auto">
+                    <table className="min-w-full">
+                      <thead>
+                        <tr>
+                          <th className="text-left p-2 bg-gray-100">Hour</th>
+                          <th className="text-left p-2 bg-gray-100">Check-ins</th>
+                          <th className="text-left p-2 bg-gray-100">% of Total</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {activeMonth === 'february' ? (
+                          <React.Fragment>
+                            <tr>
+                              <td className="p-2 border-b">1 PM</td>
+                              <td className="p-2 border-b">47</td>
+                              <td className="p-2 border-b">9.8%</td>
+                            </tr>
+                            <tr>
+                              <td className="p-2 border-b">8 AM</td>
+                              <td className="p-2 border-b">46</td>
+                              <td className="p-2 border-b">9.6%</td>
+                            </tr>
+                            <tr>
+                              <td className="p-2 border-b">10 PM</td>
+                              <td className="p-2 border-b">38</td>
+                              <td className="p-2 border-b">7.9%</td>
+                            </tr>
+                            <tr>
+                              <td className="p-2 border-b">12 PM</td>
+                              <td className="p-2 border-b">36</td>
+                              <td className="p-2 border-b">7.5%</td>
+                            </tr>
+                            <tr>
+                              <td className="p-2">9 PM</td>
+                              <td className="p-2">35</td>
+                              <td className="p-2">7.3%</td>
+                            </tr>
+                          </React.Fragment>
+                        ) : (
+                          <React.Fragment>
+                            <tr>
+                              <td className="p-2 border-b">10 PM</td>
+                              <td className="p-2 border-b">52</td>
+                              <td className="p-2 border-b">9.1%</td>
+                            </tr>
+                            <tr>
+                              <td className="p-2 border-b">1 PM</td>
+                              <td className="p-2 border-b">50</td>
+                              <td className="p-2 border-b">8.8%</td>
+                            </tr>
+                            <tr>
+                              <td className="p-2 border-b">9 PM</td>
+                              <td className="p-2 border-b">45</td>
+                              <td className="p-2 border-b">7.9%</td>
+                            </tr>
+                            <tr>
+                              <td className="p-2 border-b">12 PM</td>
+                              <td className="p-2 border-b">42</td>
+                              <td className="p-2 border-b">7.4%</td>
+                            </tr>
+                            <tr>
+                              <td className="p-2">8 AM</td>
+                              <td className="p-2">38</td>
+                              <td className="p-2">6.7%</td>
+                            </tr>
+                          </React.Fragment>
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+                
+                <div className="bg-white p-4 rounded-lg shadow">
+                  <h2 className="text-lg font-semibold mb-2">Carrier Peak Hours</h2>
+                  <ul className="space-y-2">
+                    <li className="flex justify-between items-center">
+                      <span className="font-medium">FMXH:</span>
+                      <span className="bg-blue-100 px-2 py-1 rounded">8 AM ({activeMonth === 'february' ? '36' : '32'} check-ins)</span>
+                    </li>
+                    <li className="flex justify-between items-center">
+                      <span className="font-medium">SIET:</span>
+                      <span className="bg-yellow-100 px-2 py-1 rounded">10 PM ({activeMonth === 'february' ? '20' : '25'} check-ins)</span>
+                    </li>
+                    <li className="flex justify-between items-center">
+                      <span className="font-medium">SVLD:</span>
+                      <span className="bg-green-100 px-2 py-1 rounded">9 PM ({activeMonth === 'february' ? '13' : '18'} check-ins)</span>
+                    </li>
+                    <li className="flex justify-between items-center">
+                      <span className="font-medium">FSEO:</span>
+                      <span className="bg-orange-100 px-2 py-1 rounded">9-10 PM (6 each)</span>
+                    </li>
+                    <li className="flex justify-between items-center">
+                      <span className="font-medium">TSVO:</span>
+                      <span className="bg-purple-100 px-2 py-1 rounded">1-2 PM (4 each)</span>
+                    </li>
+                    <li className="flex justify-between items-center">
+                      <span className="font-medium">AIBL:</span>
+                      <span className="bg-indigo-100 px-2 py-1 rounded">1-2 PM (3 each)</span>
+                    </li>
+                    {activeMonth === 'february' ? (
+                      <li className="flex justify-between items-center">
+                        <span className="font-medium">NOED:</span>
+                        <span className="bg-pink-100 px-2 py-1 rounded">9 PM (2 check-ins)</span>
+                      </li>
+                    ) : (
+                      <li className="flex justify-between items-center">
+                        <span className="font-medium">GMRL:</span>
+                        <span className="bg-pink-100 px-2 py-1 rounded">1 PM (3 check-ins)</span>
+                      </li>
+                    )}
+                  </ul>
+                </div>
+              </div>
+              
+              <div className="bg-white p-4 rounded-lg shadow">
+                <h2 className="text-lg font-semibold mb-2">Time Pattern Insights</h2>
+                <div className="text-sm">
+                  {timeInsights[activeMonth].map((insight, index) => (
+                    <p key={index} className="mb-2">• {insight}</p>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+          
+          {/* Weekly Analysis Tab */}
+          {activeTab === 'weekly' && (
+            <div>
+              <div className="bg-white p-4 rounded-lg shadow mb-4">
+                <h2 className="text-lg font-semibold mb-2">Weekly Check-in Totals</h2>
+                <ResponsiveContainer width="100%" height={300}>
+                  <BarChart data={weeklyCheckIns}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="week" />
+                    <YAxis />
+                    <Tooltip />
+                    <Legend />
+                    <Bar dataKey="total" fill="#8884d8" />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+              
+              <div className="bg-white p-4 rounded-lg shadow mb-4">
+                <h2 className="text-lg font-semibold mb-2">Weekly Check-ins by Carrier</h2>
+                <ResponsiveContainer width="100%" height={400}>
+                  <BarChart data={weeklyByCarrier}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="week" />
+                    <YAxis />
+                    <Tooltip />
+                    <Legend />
+                    <Bar dataKey="FMXH" fill="#0088FE" />
+                    <Bar dataKey="SVLD" fill="#00C49F" />
+                    <Bar dataKey="SIET" fill="#FFBB28" />
+                    <Bar dataKey="FSEO" fill="#FF8042" />
+                    <Bar dataKey="TSVO" fill="#8884d8" />
+                    <Bar dataKey="AIBL" fill="#82ca9d" />
+                    {activeMonth === 'february' ? 
+                      <Bar dataKey="NOED" fill="#ffc658" /> : 
+                      <Bar dataKey="GMRL" fill="#ffc658" />
+                    }
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+              
+              <div className="bg-white p-4 rounded-lg shadow">
+                <h2 className="text-lg font-semibold mb-2">Weekly Trends Analysis</h2>
+                <div className="text-sm space-y-2">
+                  {weeklyTrends[activeMonth].map((trend, index) => (
+                    <p key={index}>• <span className="font-semibold">{trend.split(':')[0]}:</span> {trend.includes(':') ? trend.split(':')[1] : trend}</p>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+          
+          {/* Month Comparison Tab */}
+          {activeTab === 'comparison' && (
+            <div>
+              <div className="bg-white p-4 rounded-lg shadow mb-4">
+                <h2 className="text-lg font-semibold mb-2">Month-to-Month Comparison</h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                  <div className="bg-blue-50 p-4 rounded-lg">
+                    <h3 className="text-md font-semibold mb-2 text-blue-800">January 2025</h3>
+                    <ul className="space-y-2">
+                      <li className="flex justify-between">
+                        <span>Total Check-ins:</span>
+                        <span className="font-semibold">{keyStats.january.totalCheckIns}</span>
+                      </li>
+                      <li className="flex justify-between">
+                        <span>Daily Average:</span>
+                        <span className="font-semibold">{keyStats.january.dailyAverage}</span>
+                      </li>
+                      <li className="flex justify-between">
+                        <span>Peak Day:</span>
+                        <span className="font-semibold">{keyStats.january.peakDay}</span>
+                      </li>
+                      <li className="flex justify-between">
+                        <span>Busiest Day of Week:</span>
+                        <span className="font-semibold">{keyStats.january.busiestDay}</span>
+                      </li>
+                      <li className="flex justify-between">
+                        <span>Top Carrier:</span>
+                        <span className="font-semibold">FMXH (45%)</span>
+                      </li>
+                    </ul>
+                  </div>
+                  
+                  <div className="bg-indigo-50 p-4 rounded-lg">
+                    <h3 className="text-md font-semibold mb-2 text-indigo-800">February 2025</h3>
+                    <ul className="space-y-2">
+                      <li className="flex justify-between">
+                        <span>Total Check-ins:</span>
+                        <span className="font-semibold">{keyStats.february.totalCheckIns}</span>
+                      </li>
+                      <li className="flex justify-between">
+                        <span>Daily Average:</span>
+                        <span className="font-semibold">{keyStats.february.dailyAverage}</span>
+                      </li>
+                      <li className="flex justify-between">
+                        <span>Peak Day:</span>
+                        <span className="font-semibold">{keyStats.february.peakDay}</span>
+                      </li>
+                      <li className="flex justify-between">
+                        <span>Busiest Day of Week:</span>
+                        <span className="font-semibold">{keyStats.february.busiestDay}</span>
+                      </li>
+                      <li className="flex justify-between">
+                        <span>Top Carrier:</span>
+                        <span className="font-semibold">FMXH (41%)</span>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+                
+                <div className="mb-4">
+                  <h3 className="text-md font-semibold mb-2">Carrier Distribution Comparison</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <ResponsiveContainer width="100%" height={250}>
+                      <PieChart>
+                        <Pie
+                          data={janCarrierDistribution}
+                          cx="50%"
+                          cy="50%"
+                          labelLine={false}
+                          outerRadius={80}
+                          fill="#8884d8"
+                          dataKey="value"
+                          label={({name, percent}) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                        >
+                          {janCarrierDistribution.map((entry, index) => (
+                            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                          ))}
+                        </Pie>
+                        <Tooltip />
+                        <Legend />
+                      </PieChart>
+                    </ResponsiveContainer>
+                    
+                    <ResponsiveContainer width="100%" height={250}>
+                      <PieChart>
+                        <Pie
+                          data={febCarrierDistribution}
+                          cx="50%"
+                          cy="50%"
+                          labelLine={false}
+                          outerRadius={80}
+                          fill="#8884d8"
+                          dataKey="value"
+                          label={({name, percent}) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                        >
+                          {febCarrierDistribution.map((entry, index) => (
+                            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                          ))}
+                        </Pie>
+                        <Tooltip />
+                        <Legend />
+                      </PieChart>
+                    </ResponsiveContainer>
+                  </div>
+                </div>
+                
+                <div>
+                  <h3 className="text-md font-semibold mb-2">Key Insights</h3>
+                  <ul className="space-y-1">
+                    {monthComparisonInsights.map((insight, index) => (
+                      <li key={index} className="flex items-start">
+                        <span className="text-indigo-600 mr-2">•</span>
+                        <span>{insight}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      );
+    };
+    
+    // Render the dashboard
+    ReactDOM.render(<CheckInDashboard />, document.getElementById('root'));
+  </script>
+</body>
+</html>
